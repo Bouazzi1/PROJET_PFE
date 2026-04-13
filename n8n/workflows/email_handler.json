@@ -1,0 +1,167 @@
+{
+  "name": "Email Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "options": {}
+      },
+      "id": "imap-trigger",
+      "name": "IMAP Email Trigger",
+      "type": "n8n-nodes-base.imapEmail",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-att",
+              "leftValue": "={{ $json.attachments ? $json.attachments.length : 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-attachment",
+      "name": "Has Attachment?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/conversations/message",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ client_id: $json.from.text || $json.from, channel: 'email', content: $json.textPlain || $json.text || $json.subject }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "backend-email",
+      "name": "Process Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 200]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('IMAP Email Trigger').item.json.to.text || 'contact@agency.com' }}",
+        "toEmail": "={{ $('IMAP Email Trigger').item.json.from.text || $('IMAP Email Trigger').item.json.from }}",
+        "subject": "={{ 'Re: ' + ($('IMAP Email Trigger').item.json.subject || 'Votre demande') }}",
+        "emailType": "text",
+        "message": "={{ $json.response }}",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Email Reply",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [850, 200],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/ocr/passport",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $('IMAP Email Trigger').item.json.from.text || $('IMAP Email Trigger').item.json.from }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "ocr-email",
+      "name": "OCR Passport (Email)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('IMAP Email Trigger').item.json.to.text || 'contact@agency.com' }}",
+        "toEmail": "={{ $('IMAP Email Trigger').item.json.from.text || $('IMAP Email Trigger').item.json.from }}",
+        "subject": "Re: Passeport traité",
+        "emailType": "text",
+        "message": "={{ 'Passeport traité avec succès !\\nNom: ' + ($json.passport_data.surname || 'N/A') + '\\nPrénom: ' + ($json.passport_data.given_names || 'N/A') + '\\nN°: ' + ($json.passport_data.passport_number || 'N/A') + '\\nExpiration: ' + ($json.passport_data.date_of_expiry || 'N/A') }}",
+        "options": {}
+      },
+      "id": "send-ocr-email",
+      "name": "Send OCR Email Reply",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [850, 400],
+      "credentials": {}
+    }
+  ],
+  "connections": {
+    "IMAP Email Trigger": {
+      "main": [
+        [
+          { "node": "Has Attachment?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Has Attachment?": {
+      "main": [
+        [
+          { "node": "OCR Passport (Email)", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Process Email", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Process Email": {
+      "main": [
+        [
+          { "node": "Send Email Reply", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "OCR Passport (Email)": {
+      "main": [
+        [
+          { "node": "Send OCR Email Reply", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

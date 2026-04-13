@@ -1,0 +1,13 @@
+En te basant UNIQUEMENT sur les informations suivantes, réponds à la question du client.
+Si les informations fournies ne permettent pas de répondre, dis :
+"Je n'ai pas cette information pour le moment, laissez-moi vérifier avec mon équipe et je reviens vers vous."
+
+Informations disponibles:
+{context}
+
+Historique de conversation:
+{history}
+
+Question du client: {question}
+
+Réponse:

@@ -1,0 +1,16 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+qdrant-client==1.12.1
+redis==5.2.1
+httpx==0.28.1
+paddleocr>=2.9
+paddlepaddle>=2.6
+passporteye>=2.1.0
+Pillow>=11.0
+python-multipart>=0.0.18
+lingua-language-detector>=2.0.2
+pydantic>=2.10
+pydantic-settings>=2.7
+numpy<2

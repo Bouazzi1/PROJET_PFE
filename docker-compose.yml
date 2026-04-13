@@ -1,0 +1,129 @@
+services:
+  # --- PostgreSQL ---
+  postgres:
+    image: postgres:16-alpine
+    container_name: rihla-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-rihla}
+      POSTGRES_USER: ${POSTGRES_USER:-rihla_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rihla_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rihla_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Qdrant (Vector Store for RAG) ---
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rihla-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  # --- Redis (Conversation Memory) ---
+  redis:
+    image: redis:7-alpine
+    container_name: rihla-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  # --- WAHA (WhatsApp HTTP API) ---
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: rihla-waha
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      WHATSAPP_DEFAULT_ENGINE: WEBJS
+      WAHA_DASHBOARD_ENABLED: "true"
+      WAHA_DASHBOARD_USERNAME: admin
+      WAHA_DASHBOARD_PASSWORD: admin123
+      WHATSAPP_SWAGGER_USERNAME: admin
+      WHATSAPP_SWAGGER_PASSWORD: admin123
+      WAHA_API_KEY: rihla2026
+      WHATSAPP_HOOK_URL: http://n8n:5678/webhook/whatsapp
+      WHATSAPP_HOOK_EVENTS: "message"
+    volumes:
+      - waha_data:/app/.sessions
+
+  # --- n8n (Workflow Orchestration) ---
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: rihla-n8n
+    restart: unless-stopped
+    ports:
+      - "5679:5678"
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD:-admin}
+      WEBHOOK_URL: http://n8n:5678
+      N8N_HOST: n8n
+      N8N_PROTOCOL: http
+      GENERIC_TIMEZONE: Africa/Tunis
+      N8N_PUBLIC_API_ENABLED: "true"
+      N8N_RUNNERS_ENABLED: "false"
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # --- FastAPI Backend ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rihla-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-rihla}
+      POSTGRES_USER: ${POSTGRES_USER:-rihla_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rihla_pass}
+      LLM_MODEL: ${LLM_MODEL:-qwen2.5:7b}
+      EMBED_MODEL: ${EMBED_MODEL:-nomic-embed-text}
+    volumes:
+      - ./backend:/app
+      - passport_images:/app/passport_uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      redis:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  postgres_data:
+  qdrant_data:
+  redis_data:
+  waha_data:
+  n8n_data:
+  passport_images:

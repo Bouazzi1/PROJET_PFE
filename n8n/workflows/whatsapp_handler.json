@@ -1,0 +1,203 @@
+{
+  "name": "WhatsApp Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "WhatsApp Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK",
+        "options": {}
+      },
+      "id": "respond-1",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.body.payload.hasMedia }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-media",
+      "name": "Has Media?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/conversations/message",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ client_id: $json.body.payload.from, channel: 'whatsapp', content: $json.body.payload.body }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "backend-text",
+      "name": "Process Text Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://waha:3000/api/sendText",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chatId: $('WhatsApp Webhook').item.json.body.payload.from + '@c.us', text: $json.response, session: 'default' }) }}",
+        "options": {}
+      },
+      "id": "send-text",
+      "name": "Send WhatsApp Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'http://waha:3000/api/media/' + $json.body.payload.mediaUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download-media",
+      "name": "Download Media",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/ocr/passport",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $('WhatsApp Webhook').item.json.body.payload.from }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "ocr-passport",
+      "name": "OCR Passport",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://waha:3000/api/sendText",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chatId: $('WhatsApp Webhook').item.json.body.payload.from + '@c.us', text: 'Passeport traité avec succès !\\nNom: ' + ($json.passport_data.surname || 'N/A') + '\\nPrénom: ' + ($json.passport_data.given_names || 'N/A') + '\\nN°: ' + ($json.passport_data.passport_number || 'N/A') + '\\nExpiration: ' + ($json.passport_data.date_of_expiry || 'N/A'), session: 'default' }) }}",
+        "options": {}
+      },
+      "id": "send-ocr-result",
+      "name": "Send OCR Result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 400]
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook": {
+      "main": [
+        [
+          { "node": "Respond OK", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Respond OK": {
+      "main": [
+        [
+          { "node": "Has Media?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Has Media?": {
+      "main": [
+        [
+          { "node": "Download Media", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Process Text Message", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Process Text Message": {
+      "main": [
+        [
+          { "node": "Send WhatsApp Reply", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Download Media": {
+      "main": [
+        [
+          { "node": "OCR Passport", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "OCR Passport": {
+      "main": [
+        [
+          { "node": "Send OCR Result", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,25 @@
+Extrait les informations suivantes de ce texte de passeport. Retourne un JSON structuré.
+
+Texte OCR extrait:
+{ocr_text}
+
+Données MRZ:
+{mrz_data}
+
+Retourne un JSON avec ces champs:
+{
+  "passport_number": "",
+  "surname": "",
+  "given_names": "",
+  "nationality": "",
+  "date_of_birth": "YYYY-MM-DD",
+  "sex": "M ou F",
+  "place_of_birth": "",
+  "date_of_issue": "YYYY-MM-DD",
+  "date_of_expiry": "YYYY-MM-DD",
+  "issuing_authority": ""
+}
+
+Si un champ n'est pas trouvé, laisse-le vide. Privilégie les données MRZ car elles sont plus fiables.
+
+JSON:

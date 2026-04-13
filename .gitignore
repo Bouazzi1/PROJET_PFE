@@ -1,0 +1,39 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+
+# Docker volumes
+postgres_data/
+qdrant_data/
+redis_data/
+waha_data/
+n8n_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Passport uploads
+passport_uploads/
+
+# n8n credentials
+n8n/credentials/
+
+# Logs
+*.log

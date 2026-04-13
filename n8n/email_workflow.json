@@ -1,0 +1,106 @@
+{
+  "name": "Email Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "options": {},
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        }
+      },
+      "id": "imap-node",
+      "name": "Check Emails",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "credentials": {
+        "imap": {
+          "id": "zqvhfQ6gEEwr3ZDz",
+          "name": "Gmail IMAP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/api/conversations/message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ channel: 'email', client_id: $json.from || $json.sender || 'unknown', content: ($json.textPlain || $json.textHtml || $json.subject || 'Bonjour').substring(0, 2000), has_media: false }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "backend-node",
+      "name": "Send to Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "fromEmail": "contact.alrihla@gmail.com",
+        "toEmail": "={{ $('Check Emails').item.json.from || $('Check Emails').item.json.sender }}",
+        "subject": "=Re: {{ $('Check Emails').item.json.subject }}",
+        "emailFormat": "html",
+        "html": "=<p>{{ $json.response }}</p>",
+        "options": {}
+      },
+      "id": "smtp-node",
+      "name": "Reply Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [750, 300],
+      "credentials": {
+        "smtp": {
+          "id": "i7SZHCke5Pbme7aZ",
+          "name": "Gmail SMTP"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Check Emails": {
+      "main": [
+        [
+          {
+            "node": "Send to Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Backend": {
+      "main": [
+        [
+          {
+            "node": "Reply Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
