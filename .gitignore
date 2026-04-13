@@ -37,3 +37,6 @@ n8n/credentials/
 
 # Logs
 *.log
+
+# Markdown (credentials, guides - kept locally only)
+*.md
