@@ -33,6 +33,7 @@ class RAGService:
         language: str | None = None,
         history: list[dict] | None = None,
         top_k: int = 5,
+        filter_type: str | None = None,
     ) -> dict:
         language = language or "fr"
         collection = COLLECTION_FR if language == "fr" else COLLECTION_AR
@@ -47,11 +48,19 @@ class RAGService:
         # Embed the question
         query_vector = await llm_service.embed(contextual_query)
 
+        # Build optional filter
+        qdrant_filter = None
+        if filter_type:
+            qdrant_filter = Filter(
+                must=[FieldCondition(key="type", match=MatchValue(value=filter_type))]
+            )
+
         # Search Qdrant
         results = self.qdrant.search(
             collection_name=collection,
             query_vector=query_vector,
             limit=top_k,
+            query_filter=qdrant_filter,
         )
 
         # Build context from results

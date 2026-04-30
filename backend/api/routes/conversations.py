@@ -63,6 +63,15 @@ async def process_message(request: MessageRequest):
             response_text = _passport_instructions(lang)
         elif intent == "booking":
             response_text = _booking_instructions(lang)
+        elif intent == "program":
+            rag_result = await rag_service.query(
+                question=request.content,
+                language=lang,
+                history=history,
+                filter_type="program",
+                top_k=20,
+            )
+            response_text = rag_result["answer"]
         else:
             rag_result = await rag_service.query(
                 question=request.content,
@@ -141,6 +150,12 @@ async def _classify_intent(content: str, lang: str) -> str:
     booking_keywords = [
         "réserv", "reserv", "book", "حجز", "inscrire",
     ]
+    program_keywords = [
+        "programme", "programs", "forfait", "séjour", "voyage",
+        "offre", "package", "formule", "circuit", "disponible",
+        "avez-vous", "proposez", "prix pour", "combien pour",
+        "برنامج", "برامج", "رحلة", "عرض", "باقة",
+    ]
 
     for kw in recommendation_keywords:
         if kw in content_lower:
@@ -151,6 +166,9 @@ async def _classify_intent(content: str, lang: str) -> str:
     for kw in booking_keywords:
         if kw in content_lower:
             return "booking"
+    for kw in program_keywords:
+        if kw in content_lower:
+            return "program"
     return "general"
 
 
