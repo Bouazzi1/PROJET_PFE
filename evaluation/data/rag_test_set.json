@@ -1,0 +1,152 @@
+[
+  {
+    "id": 1,
+    "question": "Quel est le prix du programme Istanbul Découverte Budget ?",
+    "expected_answer": "2100 TND",
+    "category": "price"
+  },
+  {
+    "id": 2,
+    "question": "Combien de jours dure le programme Omra Complète ?",
+    "expected_answer": "15 jours",
+    "category": "duration"
+  },
+  {
+    "id": 3,
+    "question": "Quels programmes sont disponibles pour Antalya ?",
+    "expected_answer": "Antalya Tout Inclus Famille et Antalya Prestige",
+    "category": "program_list"
+  },
+  {
+    "id": 4,
+    "question": "Quel est le prix du programme Dubai Royal Experience ?",
+    "expected_answer": "11500 TND",
+    "category": "price"
+  },
+  {
+    "id": 5,
+    "question": "Le programme Paris en Famille inclut-il l'entrée à Disneyland ?",
+    "expected_answer": "Oui, le billet Disneyland est inclus",
+    "category": "includes"
+  },
+  {
+    "id": 6,
+    "question": "Quel hôtel est associé au programme Antalya Prestige ?",
+    "expected_answer": "Titanic Deluxe Belek, 5 étoiles",
+    "category": "hotel"
+  },
+  {
+    "id": 7,
+    "question": "Quelle est la durée du programme Rome Éternelle ?",
+    "expected_answer": "5 jours",
+    "category": "duration"
+  },
+  {
+    "id": 8,
+    "question": "Le programme Le Caire et Pyramides inclut-il un guide ?",
+    "expected_answer": "Oui, un guide francophone est inclus",
+    "category": "includes"
+  },
+  {
+    "id": 9,
+    "question": "Quel programme est recommandé pour un voyage religieux ?",
+    "expected_answer": "Omra Complète 15 jours",
+    "category": "program_type"
+  },
+  {
+    "id": 10,
+    "question": "Combien coûte le programme Marrakech Authentique ?",
+    "expected_answer": "2600 TND",
+    "category": "price"
+  },
+  {
+    "id": 11,
+    "question": "Quelles activités sont incluses dans le programme Istanbul Budget ?",
+    "expected_answer": "Visite Sainte-Sophie et croisière Bosphore",
+    "category": "includes"
+  },
+  {
+    "id": 12,
+    "question": "Quel est le climat à Antalya ?",
+    "expected_answer": "Méditerranéen",
+    "category": "destination"
+  },
+  {
+    "id": 13,
+    "question": "Le programme Dubai Aventure inclut-il le safari désert ?",
+    "expected_answer": "Oui, le safari désert est inclus",
+    "category": "includes"
+  },
+  {
+    "id": 14,
+    "question": "Quelle est la meilleure saison pour visiter Istanbul ?",
+    "expected_answer": "Printemps et Automne",
+    "category": "destination"
+  },
+  {
+    "id": 15,
+    "question": "Combien coûte le programme Antalya Tout Inclus Famille ?",
+    "expected_answer": "2800 TND",
+    "category": "price"
+  },
+  {
+    "id": 16,
+    "question": "Le visa est-il obligatoire pour Paris ?",
+    "expected_answer": "Oui, un visa est requis pour la France",
+    "category": "visa"
+  },
+  {
+    "id": 17,
+    "question": "Quel programme propose un spa et un golf à Antalya ?",
+    "expected_answer": "Antalya Prestige au Titanic Deluxe Belek",
+    "category": "amenities"
+  },
+  {
+    "id": 18,
+    "question": "Combien de participants maximum pour le programme Omra ?",
+    "expected_answer": "50 participants",
+    "category": "capacity"
+  },
+  {
+    "id": 19,
+    "question": "Quel programme inclut une visite du Vatican ?",
+    "expected_answer": "Rome Éternelle",
+    "category": "includes"
+  },
+  {
+    "id": 20,
+    "question": "Quelle compagnie aérienne opère le vol vers Istanbul en classe économique ?",
+    "expected_answer": "Tunisair",
+    "category": "flight"
+  },
+  {
+    "id": 21,
+    "question": "ما هو سعر برنامج اسطنبول الاقتصادي؟",
+    "expected_answer": "2100 دينار تونسي",
+    "category": "price_ar"
+  },
+  {
+    "id": 22,
+    "question": "كم يدوم برنامج العمرة الكاملة؟",
+    "expected_answer": "15 يوماً",
+    "category": "duration_ar"
+  },
+  {
+    "id": 23,
+    "question": "هل يشمل برنامج دبي المغامرة رحلة السفاري؟",
+    "expected_answer": "نعم، السفاري الصحراوي مشمول",
+    "category": "includes_ar"
+  },
+  {
+    "id": 24,
+    "question": "ما هي البرامج المتاحة في أنطاليا؟",
+    "expected_answer": "أنطاليا شامل عائلي وأنطاليا برستيج",
+    "category": "program_list_ar"
+  },
+  {
+    "id": 25,
+    "question": "ما هو مناخ مراكش؟",
+    "expected_answer": "شبه جاف",
+    "category": "destination_ar"
+  }
+]

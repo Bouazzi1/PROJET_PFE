@@ -1,0 +1,249 @@
+[
+  {
+    "id": 1,
+    "title_fr": "Istanbul Découverte - Budget",
+    "destination": "Istanbul",
+    "price": 2100,
+    "duration_days": 7,
+    "category": "budget",
+    "target_audience": "student",
+    "visa_required": false,
+    "hotel_stars": 2,
+    "climate": "Méditerranéen",
+    "best_season": "Printemps, Automne",
+    "amenities": [
+      "wifi",
+      "petit-dejeuner"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "hotel 6 nuits",
+      "visites"
+    ]
+  },
+  {
+    "id": 2,
+    "title_fr": "Istanbul Premium - Business",
+    "destination": "Istanbul",
+    "price": 5200,
+    "duration_days": 7,
+    "category": "luxury",
+    "target_audience": "business",
+    "visa_required": false,
+    "hotel_stars": 5,
+    "climate": "Méditerranéen",
+    "best_season": "Printemps, Automne",
+    "amenities": [
+      "wifi",
+      "spa",
+      "business center"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "transfert prive",
+      "hotel 5 etoiles"
+    ]
+  },
+  {
+    "id": 3,
+    "title_fr": "Dubai Aventure",
+    "destination": "Dubai",
+    "price": 3200,
+    "duration_days": 7,
+    "category": "adventure",
+    "target_audience": "young",
+    "visa_required": true,
+    "hotel_stars": 4,
+    "climate": "Désertique",
+    "best_season": "Hiver, Printemps",
+    "amenities": [
+      "wifi",
+      "piscine"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "desert safari",
+      "city tour"
+    ]
+  },
+  {
+    "id": 4,
+    "title_fr": "Dubai Royal Experience",
+    "destination": "Dubai",
+    "price": 11500,
+    "duration_days": 7,
+    "category": "luxury",
+    "target_audience": "couple",
+    "visa_required": true,
+    "hotel_stars": 5,
+    "climate": "Désertique",
+    "best_season": "Hiver, Printemps",
+    "amenities": [
+      "spa",
+      "piscine",
+      "plage"
+    ],
+    "includes": [
+      "vol business",
+      "hotel palace",
+      "diner romantique"
+    ]
+  },
+  {
+    "id": 5,
+    "title_fr": "Paris en Famille",
+    "destination": "Paris",
+    "price": 4800,
+    "duration_days": 7,
+    "category": "standard",
+    "target_audience": "family",
+    "visa_required": true,
+    "hotel_stars": 3,
+    "climate": "Océanique",
+    "best_season": "Printemps, Été",
+    "amenities": [
+      "wifi",
+      "petit-dejeuner"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "hotel familial",
+      "disney option"
+    ]
+  },
+  {
+    "id": 6,
+    "title_fr": "Omra Complète 15 jours",
+    "destination": "La Mecque",
+    "price": 6200,
+    "duration_days": 15,
+    "category": "religious",
+    "target_audience": "all",
+    "visa_required": true,
+    "hotel_stars": 4,
+    "climate": "Désertique",
+    "best_season": "Toute l'année",
+    "amenities": [
+      "wifi",
+      "proche haram"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "visa omra",
+      "transferts"
+    ]
+  },
+  {
+    "id": 7,
+    "title_fr": "Marrakech Authentique",
+    "destination": "Marrakech",
+    "price": 2600,
+    "duration_days": 7,
+    "category": "standard",
+    "target_audience": "all",
+    "visa_required": false,
+    "hotel_stars": 4,
+    "climate": "Semi-aride",
+    "best_season": "Printemps, Automne",
+    "amenities": [
+      "wifi",
+      "piscine",
+      "spa"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "riad",
+      "excursions"
+    ]
+  },
+  {
+    "id": 8,
+    "title_fr": "Antalya Tout Inclus - Famille",
+    "destination": "Antalya",
+    "price": 2800,
+    "duration_days": 7,
+    "category": "standard",
+    "target_audience": "family",
+    "visa_required": false,
+    "hotel_stars": 4,
+    "climate": "Méditerranéen",
+    "best_season": "Été, Automne",
+    "amenities": [
+      "piscine",
+      "plage",
+      "wifi"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "hotel",
+      "tout inclus"
+    ]
+  },
+  {
+    "id": 9,
+    "title_fr": "Antalya Prestige",
+    "destination": "Antalya",
+    "price": 4500,
+    "duration_days": 7,
+    "category": "luxury",
+    "target_audience": "couple",
+    "visa_required": false,
+    "hotel_stars": 5,
+    "climate": "Méditerranéen",
+    "best_season": "Été, Automne",
+    "amenities": [
+      "spa",
+      "piscine",
+      "plage"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "resort luxe",
+      "tout inclus"
+    ]
+  },
+  {
+    "id": 10,
+    "title_fr": "Le Caire & Pyramides",
+    "destination": "Le Caire",
+    "price": 2100,
+    "duration_days": 7,
+    "category": "budget",
+    "target_audience": "all",
+    "visa_required": true,
+    "hotel_stars": 3,
+    "climate": "Désertique",
+    "best_season": "Hiver, Printemps",
+    "amenities": [
+      "wifi",
+      "petit-dejeuner"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "pyramides",
+      "musee"
+    ]
+  },
+  {
+    "id": 11,
+    "title_fr": "Rome Éternelle",
+    "destination": "Rome",
+    "price": 2400,
+    "duration_days": 5,
+    "category": "standard",
+    "target_audience": "all",
+    "visa_required": true,
+    "hotel_stars": 3,
+    "climate": "Méditerranéen",
+    "best_season": "Printemps, Automne",
+    "amenities": [
+      "wifi",
+      "petit-dejeuner"
+    ],
+    "includes": [
+      "vol aller-retour",
+      "hotel centre",
+      "city pass"
+    ]
+  }
+]

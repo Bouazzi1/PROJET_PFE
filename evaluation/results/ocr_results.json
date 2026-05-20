@@ -1,0 +1,221 @@
+{
+  "avg_field_accuracy": 0.88,
+  "mrz_parse_rate": 1.0,
+  "avg_cer": 0.0435,
+  "n_total": 5,
+  "n_success": 5,
+  "per_field": {
+    "passport_number": {
+      "accuracy": 0.8,
+      "n": 5
+    },
+    "surname": {
+      "accuracy": 0.8,
+      "n": 5
+    },
+    "given_names": {
+      "accuracy": 0.8,
+      "n": 5
+    },
+    "nationality": {
+      "accuracy": 1.0,
+      "n": 5
+    },
+    "sex": {
+      "accuracy": 1.0,
+      "n": 5
+    }
+  },
+  "records": [
+    {
+      "id": 1,
+      "field_accuracy": 0.8,
+      "mrz_parsed": true,
+      "fields": {
+        "passport_number": {
+          "expected": "W7786074",
+          "predicted": "W7786074",
+          "match": true,
+          "cer": 0.0
+        },
+        "surname": {
+          "expected": "THONEES",
+          "predicted": "THONEES",
+          "match": true,
+          "cer": 0.0
+        },
+        "given_names": {
+          "expected": "JEROJA",
+          "predicted": "JEROSA",
+          "match": false,
+          "cer": 0.167
+        },
+        "nationality": {
+          "expected": "IND",
+          "predicted": "IND",
+          "match": true,
+          "cer": 0.0
+        },
+        "sex": {
+          "expected": "F",
+          "predicted": "F",
+          "match": true,
+          "cer": 0.0
+        }
+      },
+      "error": null
+    },
+    {
+      "id": 2,
+      "field_accuracy": 1.0,
+      "mrz_parsed": true,
+      "fields": {
+        "passport_number": {
+          "expected": "A08852425",
+          "predicted": "A08852425",
+          "match": true,
+          "cer": 0.0
+        },
+        "surname": {
+          "expected": "HASAN",
+          "predicted": "HASAN",
+          "match": true,
+          "cer": 0.0
+        },
+        "given_names": {
+          "expected": "MD JUBIDUL",
+          "predicted": "MD JUBIDUL",
+          "match": true,
+          "cer": 0.0
+        },
+        "nationality": {
+          "expected": "BGD",
+          "predicted": "BGD",
+          "match": true,
+          "cer": 0.0
+        },
+        "sex": {
+          "expected": "M",
+          "predicted": "M",
+          "match": true,
+          "cer": 0.0
+        }
+      },
+      "error": null
+    },
+    {
+      "id": 3,
+      "field_accuracy": 0.8,
+      "mrz_parsed": true,
+      "fields": {
+        "passport_number": {
+          "expected": "U7628221",
+          "predicted": "U7628221",
+          "match": true,
+          "cer": 0.0
+        },
+        "surname": {
+          "expected": "KAUNDAL",
+          "predicted": "AUNDAL",
+          "match": false,
+          "cer": 0.143
+        },
+        "given_names": {
+          "expected": "ABISH",
+          "predicted": "ABISH",
+          "match": true,
+          "cer": 0.0
+        },
+        "nationality": {
+          "expected": "IND",
+          "predicted": "IND",
+          "match": true,
+          "cer": 0.0
+        },
+        "sex": {
+          "expected": "M",
+          "predicted": "M",
+          "match": true,
+          "cer": 0.0
+        }
+      },
+      "error": null
+    },
+    {
+      "id": 4,
+      "field_accuracy": 0.8,
+      "mrz_parsed": true,
+      "fields": {
+        "passport_number": {
+          "expected": "P0000000A",
+          "predicted": "POOOOODOA",
+          "match": false,
+          "cer": 0.778
+        },
+        "surname": {
+          "expected": "DELA CRUZ",
+          "predicted": "DELA CRUZ",
+          "match": true,
+          "cer": 0.0
+        },
+        "given_names": {
+          "expected": "MARIA",
+          "predicted": "MARIA",
+          "match": true,
+          "cer": 0.0
+        },
+        "nationality": {
+          "expected": "PHL",
+          "predicted": "PHL",
+          "match": true,
+          "cer": 0.0
+        },
+        "sex": {
+          "expected": "F",
+          "predicted": "F",
+          "match": true,
+          "cer": 0.0
+        }
+      },
+      "error": null
+    },
+    {
+      "id": 5,
+      "field_accuracy": 1.0,
+      "mrz_parsed": true,
+      "fields": {
+        "passport_number": {
+          "expected": "GA071645",
+          "predicted": "GA071645",
+          "match": true,
+          "cer": 0.0
+        },
+        "surname": {
+          "expected": "ANTOINE",
+          "predicted": "ANTOINE",
+          "match": true,
+          "cer": 0.0
+        },
+        "given_names": {
+          "expected": "OTIS DEON",
+          "predicted": "OTIS DEON",
+          "match": true,
+          "cer": 0.0
+        },
+        "nationality": {
+          "expected": "GRD",
+          "predicted": "GRD",
+          "match": true,
+          "cer": 0.0
+        },
+        "sex": {
+          "expected": "M",
+          "predicted": "M",
+          "match": true,
+          "cer": 0.0
+        }
+      },
+      "error": null
+    }
+  ]
+}

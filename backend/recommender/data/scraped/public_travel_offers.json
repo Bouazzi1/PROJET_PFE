@@ -1,0 +1,102 @@
+[
+  {
+    "source": "TTS Booking",
+    "url": "https://www.ttsbooking.tn/voyages-organises/",
+    "destination": "Istanbul",
+    "price_tnd": 2005,
+    "duration_days": 7,
+    "category": "standard",
+    "target": "all",
+    "notes": "Istanbul Juin 2026, vol Turkish Airlines"
+  },
+  {
+    "source": "TTS Booking",
+    "url": "https://www.ttsbooking.tn/voyages-organises/",
+    "destination": "Istanbul",
+    "price_tnd": 2505,
+    "duration_days": 7,
+    "category": "standard",
+    "target": "young",
+    "notes": "Istanbul Summer 2026"
+  },
+  {
+    "source": "TTS Booking",
+    "url": "https://www.ttsbooking.tn/voyages-organises/",
+    "destination": "Antalya",
+    "price_tnd": 3790,
+    "duration_days": 8,
+    "category": "standard",
+    "target": "family",
+    "notes": "Antalya Istanbul Summer 2026"
+  },
+  {
+    "source": "VoyageTunisie",
+    "url": "https://www.voyagetunisie.tn/voyages-de-noces/istanbul.html",
+    "destination": "Istanbul",
+    "price_tnd": 1000,
+    "duration_days": 7,
+    "category": "budget",
+    "target": "couple",
+    "notes": "Voyage de noces Istanbul à partir de 1000 TND"
+  },
+  {
+    "source": "CTE",
+    "url": "https://www.cte.tn/voyage/voyage-istanbul-2026.html",
+    "destination": "Istanbul",
+    "price_tnd": 1990,
+    "duration_days": 7,
+    "category": "standard",
+    "target": "all",
+    "notes": "Voyage organisé Istanbul 2026 avec excursions"
+  },
+  {
+    "source": "Miralina Travel",
+    "url": "https://www.hotelstunisie.tn/voyages",
+    "destination": "Antalya",
+    "price_tnd": 1500,
+    "duration_days": 8,
+    "category": "budget",
+    "target": "family",
+    "notes": "Vol, transfert, hébergement"
+  },
+  {
+    "source": "Miralina Travel",
+    "url": "https://www.hotelstunisie.tn/voyages",
+    "destination": "Istanbul",
+    "price_tnd": 1500,
+    "duration_days": 7,
+    "category": "budget",
+    "target": "all",
+    "notes": "Vol, transfert, hébergement"
+  },
+  {
+    "source": "Omra24",
+    "url": "https://www.omra24.com/",
+    "destination": "La Mecque",
+    "price_tnd": 3000,
+    "duration_days": 14,
+    "category": "religious",
+    "target": "all",
+    "notes": "Omra 2 semaines, fourchette basse chambre quadruple"
+  },
+  {
+    "source": "OmraTunisie",
+    "url": "https://www.omratunisie.tn/omra/sup.html",
+    "destination": "La Mecque",
+    "price_tnd": 5500,
+    "duration_days": 14,
+    "category": "religious",
+    "target": "all",
+    "notes": "Omra deux semaines, chambre double"
+  },
+  {
+    "source": "Tunisie Promo",
+    "url": "https://tp.octasoft.com.tn/",
+    "destination": "La Mecque",
+    "price_tnd": 4050,
+    "duration_days": 15,
+    "category": "religious",
+    "target": "all",
+    "notes": "OMRA 15 jours / 14 nuits"
+  }
+]

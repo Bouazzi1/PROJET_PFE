@@ -1,0 +1,366 @@
+{
+  "avg_relevance": 0.6447,
+  "exact_match_rate": 0.52,
+  "avg_latency_ms": 2583.3,
+  "n_success": 25,
+  "n_total": 25,
+  "by_category": {
+    "price": {
+      "avg_relevance": 0.875,
+      "exact_match_rate": 0.0,
+      "n": 4
+    },
+    "duration": {
+      "avg_relevance": 1.0,
+      "exact_match_rate": 1.0,
+      "n": 2
+    },
+    "program_list": {
+      "avg_relevance": 1.0,
+      "exact_match_rate": 1.0,
+      "n": 1
+    },
+    "includes": {
+      "avg_relevance": 0.8,
+      "exact_match_rate": 1.0,
+      "n": 5
+    },
+    "hotel": {
+      "avg_relevance": 0.5,
+      "exact_match_rate": 1.0,
+      "n": 1
+    },
+    "program_type": {
+      "avg_relevance": 0.0,
+      "exact_match_rate": 0.0,
+      "n": 1
+    },
+    "destination": {
+      "avg_relevance": 0.0,
+      "exact_match_rate": 0.0,
+      "n": 2
+    },
+    "visa": {
+      "avg_relevance": 0.0,
+      "exact_match_rate": 0.0,
+      "n": 1
+    },
+    "amenities": {
+      "avg_relevance": 0.4,
+      "exact_match_rate": 1.0,
+      "n": 1
+    },
+    "capacity": {
+      "avg_relevance": 1.0,
+      "exact_match_rate": 0.0,
+      "n": 1
+    },
+    "flight": {
+      "avg_relevance": 0.0,
+      "exact_match_rate": 0.0,
+      "n": 1
+    },
+    "price_ar": {
+      "avg_relevance": 0.6667,
+      "exact_match_rate": 0.0,
+      "n": 1
+    },
+    "duration_ar": {
+      "avg_relevance": 1.0,
+      "exact_match_rate": 1.0,
+      "n": 1
+    },
+    "includes_ar": {
+      "avg_relevance": 0.75,
+      "exact_match_rate": 1.0,
+      "n": 1
+    },
+    "program_list_ar": {
+      "avg_relevance": 0.8,
+      "exact_match_rate": 1.0,
+      "n": 1
+    },
+    "destination_ar": {
+      "avg_relevance": 0.5,
+      "exact_match_rate": 0.0,
+      "n": 1
+    }
+  },
+  "records": [
+    {
+      "id": 1,
+      "question": "Quel est le prix du programme Istanbul Découverte Budget ?",
+      "expected_answer": "2100 TND",
+      "category": "price",
+      "generated": "Le prix du programme Istanbul Découverte - Budget est de 2100.00 TND.",
+      "relevance": 1.0,
+      "exact_match": false,
+      "latency_ms": 2878.6,
+      "error": null
+    },
+    {
+      "id": 2,
+      "question": "Combien de jours dure le programme Omra Complète ?",
+      "expected_answer": "15 jours",
+      "category": "duration",
+      "generated": "Le programme Omra Complète dure 15 jours.",
+      "relevance": 1.0,
+      "exact_match": true,
+      "latency_ms": 2015.1,
+      "error": null
+    },
+    {
+      "id": 3,
+      "question": "Quels programmes sont disponibles pour Antalya ?",
+      "expected_answer": "Antalya Tout Inclus Famille et Antalya Prestige",
+      "category": "program_list",
+      "generated": "Pour Antalya, deux programmes sont disponibles :\n\n1. **Antalya Tout Inclus - Famille**\n   - Durée : 7 jours\n   - Prix : 2800.00 TND\n   - Hôtel : Antalya Beach Resort (4 étoiles)\n   - Inclus : vol aller-retour, hôtel 4 étoiles tout inclus 7 nuits, plage privée, animation, excursion Pamukkale\n\n2. **Antalya Prestige**\n   - Durée : 7 jours\n   - Prix : 4500.00 TND\n   - Hôtel : Titanic Deluxe Belek (5 étoiles)\n   - Inclus : vol aller-retour, resort 5 étoiles tout inclus 7 nuits, spa, golf, plage privée, transfert VIP",
+      "relevance": 1.0,
+      "exact_match": true,
+      "latency_ms": 6129.6,
+      "error": null
+    },
+    {
+      "id": 4,
+      "question": "Quel est le prix du programme Dubai Royal Experience ?",
+      "expected_answer": "11500 TND",
+      "category": "price",
+      "generated": "Le prix du programme Dubai Royal Experience est de 11 500.00 TND.",
+      "relevance": 0.5,
+      "exact_match": false,
+      "latency_ms": 2336.0,
+      "error": null
+    },
+    {
+      "id": 5,
+      "question": "Le programme Paris en Famille inclut-il l'entrée à Disneyland ?",
+      "expected_answer": "Oui, le billet Disneyland est inclus",
+      "category": "includes",
+      "generated": "Oui, le programme Paris en Famille inclut l'entrée à Disneyland Paris.",
+      "relevance": 0.5,
+      "exact_match": true,
+      "latency_ms": 2334.9,
+      "error": null
+    },
+    {
+      "id": 6,
+      "question": "Quel hôtel est associé au programme Antalya Prestige ?",
+      "expected_answer": "Titanic Deluxe Belek, 5 étoiles",
+      "category": "hotel",
+      "generated": "L'hôtel associé au programme Antalya Prestige est le Titanic Deluxe Belek.",
+      "relevance": 0.5,
+      "exact_match": true,
+      "latency_ms": 2375.6,
+      "error": null
+    },
+    {
+      "id": 7,
+      "question": "Quelle est la durée du programme Rome Éternelle ?",
+      "expected_answer": "5 jours",
+      "category": "duration",
+      "generated": "La durée du programme Rome Éternelle est de 5 jours.",
+      "relevance": 1.0,
+      "exact_match": true,
+      "latency_ms": 2212.4,
+      "error": null
+    },
+    {
+      "id": 8,
+      "question": "Le programme Le Caire et Pyramides inclut-il un guide ?",
+      "expected_answer": "Oui, un guide francophone est inclus",
+      "category": "includes",
+      "generated": "Oui, le programme Le Caire & Pyramides inclut un guide francophone.",
+      "relevance": 0.75,
+      "exact_match": true,
+      "latency_ms": 2263.8,
+      "error": null
+    },
+    {
+      "id": 9,
+      "question": "Quel programme est recommandé pour un voyage religieux ?",
+      "expected_answer": "Omra Complète 15 jours",
+      "category": "program_type",
+      "generated": "Avec plaisir ! Pour vous proposer les programmes les mieux adaptés, j'ai besoin de deux informations :\n\n1️⃣ *Qui voyage ?*\n   Étudiant | Jeune | Famille | Couple | Professionnel | Senior\n\n2️⃣ *Quel est votre budget ?*\n   Économique | Moyen | Luxe",
+      "relevance": 0.0,
+      "exact_match": false,
+      "latency_ms": 266.4,
+      "error": null
+    },
+    {
+      "id": 10,
+      "question": "Combien coûte le programme Marrakech Authentique ?",
+      "expected_answer": "2600 TND",
+      "category": "price",
+      "generated": "Le programme Marrakech Authentique coûte 2600.00 TND.",
+      "relevance": 1.0,
+      "exact_match": false,
+      "latency_ms": 2232.8,
+      "error": null
+    },
+    {
+      "id": 11,
+      "question": "Quelles activités sont incluses dans le programme Istanbul Budget ?",
+      "expected_answer": "Visite Sainte-Sophie et croisière Bosphore",
+      "category": "includes",
+      "generated": "Dans le programme Istanbul Budget, les activités incluses sont :\n\n- Vol aller-retour\n- Hébergement 7 nuits en auberge\n- Petit-déjeuner quotidien\n- Transfert aéroport\n- Visite de la Sainte-Sophie\n- Croisière Bosphore",
+      "relevance": 1.0,
+      "exact_match": true,
+      "latency_ms": 3402.4,
+      "error": null
+    },
+    {
+      "id": 12,
+      "question": "Quel est le climat à Antalya ?",
+      "expected_answer": "Méditerranéen",
+      "category": "destination",
+      "generated": "D'après les informations fournies, il n'y a pas de mention du climat d'Antalya. Les détails météorologiques concernent Marrakech, Maroc, qui a un climat semi-aride, mais Antalya n'est pas listée.",
+      "relevance": 0.0,
+      "exact_match": false,
+      "latency_ms": 2445.5,
+      "error": null
+    },
+    {
+      "id": 13,
+      "question": "Le programme Dubai Aventure inclut-il le safari désert ?",
+      "expected_answer": "Oui, le safari désert est inclus",
+      "category": "includes",
+      "generated": "Oui, le programme Dubai Aventure inclut bien le safari désert.",
+      "relevance": 0.75,
+      "exact_match": true,
+      "latency_ms": 2270.4,
+      "error": null
+    },
+    {
+      "id": 14,
+      "question": "Quelle est la meilleure saison pour visiter Istanbul ?",
+      "expected_answer": "Printemps et Automne",
+      "category": "destination",
+      "generated": "Avec plaisir ! Pour vous proposer les programmes les mieux adaptés, j'ai besoin de deux informations :\n\n1️⃣ *Qui voyage ?*\n   Étudiant | Jeune | Famille | Couple | Professionnel | Senior\n\n2️⃣ *Quel est votre budget ?*\n   Économique | Moyen | Luxe",
+      "relevance": 0.0,
+      "exact_match": false,
+      "latency_ms": 267.5,
+      "error": null
+    },
+    {
+      "id": 15,
+      "question": "Combien coûte le programme Antalya Tout Inclus Famille ?",
+      "expected_answer": "2800 TND",
+      "category": "price",
+      "generated": "Le programme Antalya Tout Inclus - Famille coûte 2800.00 TND.",
+      "relevance": 1.0,
+      "exact_match": false,
+      "latency_ms": 2523.3,
+      "error": null
+    },
+    {
+      "id": 16,
+      "question": "Le visa est-il obligatoire pour Paris ?",
+      "expected_answer": "Oui, un visa est requis pour la France",
+      "category": "visa",
+      "generated": "Veuillez envoyer une photo de votre passeport et j'extrairai automatiquement les informations nécessaires.",
+      "relevance": 0.0,
+      "exact_match": false,
+      "latency_ms": 286.5,
+      "error": null
+    },
+    {
+      "id": 17,
+      "question": "Quel programme propose un spa et un golf à Antalya ?",
+      "expected_answer": "Antalya Prestige au Titanic Deluxe Belek",
+      "category": "amenities",
+      "generated": "Le programme \"Antalya Prestige\" propose un spa et un golf à Antalya. Il s'agit d'un séjour luxueux de 7 jours dans un resort 5 étoiles offrant des services tels que le spa, le golf, la plage privée et la gastronomie internationale.",
+      "relevance": 0.4,
+      "exact_match": true,
+      "latency_ms": 3547.3,
+      "error": null
+    },
+    {
+      "id": 18,
+      "question": "Combien de participants maximum pour le programme Omra ?",
+      "expected_answer": "50 participants",
+      "category": "capacity",
+      "generated": "Le programme Omra Complète 15 jours ne précise pas de nombre maximum de participants. Il s'agit d'un voyage individuel ou à plusieurs, adaptant les services aux besoins des voyageurs.",
+      "relevance": 1.0,
+      "exact_match": false,
+      "latency_ms": 2991.0,
+      "error": null
+    },
+    {
+      "id": 19,
+      "question": "Quel programme inclut une visite du Vatican ?",
+      "expected_answer": "Rome Éternelle",
+      "category": "includes",
+      "generated": "Le programme \"Rome Éternelle\" inclut une visite du Vatican. Ce séjour culturel de 5 jours à Rome offre la possibilité de visiter le Colisée, le Vatican y compris la Chapelle Sixtine, ainsi que d'autres sites emblématiques comme la Fontaine de Trevi et des dégustations gastronomiques authentiques.",
+      "relevance": 1.0,
+      "exact_match": true,
+      "latency_ms": 3768.6,
+      "error": null
+    },
+    {
+      "id": 20,
+      "question": "Quelle compagnie aérienne opère le vol vers Istanbul en classe économique ?",
+      "expected_answer": "Tunisair",
+      "category": "flight",
+      "generated": "Désolé, mais avec les informations fournies, je ne peux pas répondre à la question concernant la compagnie aérienne opérant le vol vers Istanbul en classe économique. Les détails sur la compagnie aérienne ne sont pas inclus dans les descriptions des programmes de voyage fournis.",
+      "relevance": 0.0,
+      "exact_match": false,
+      "latency_ms": 2738.4,
+      "error": null
+    },
+    {
+      "id": 21,
+      "question": "ما هو سعر برنامج اسطنبول الاقتصادي؟",
+      "expected_answer": "2100 دينار تونسي",
+      "category": "price_ar",
+      "generated": "سعر برنامج اسطنبول الاقتصادي هو 2100.00 توني دينار (TND).",
+      "relevance": 0.6667,
+      "exact_match": false,
+      "latency_ms": 2686.9,
+      "error": null
+    },
+    {
+      "id": 22,
+      "question": "كم يدوم برنامج العمرة الكاملة؟",
+      "expected_answer": "15 يوماً",
+      "category": "duration_ar",
+      "generated": "برنامج العمرة الكاملة يستمر لمدة 15 يوماً.",
+      "relevance": 1.0,
+      "exact_match": true,
+      "latency_ms": 2377.4,
+      "error": null
+    },
+    {
+      "id": 23,
+      "question": "هل يشمل برنامج دبي المغامرة رحلة السفاري؟",
+      "expected_answer": "نعم، السفاري الصحراوي مشمول",
+      "category": "includes_ar",
+      "generated": "نعم، برنامج مغامرة دبي يشمل رحلة السفاري الصحراوي.",
+      "relevance": 0.75,
+      "exact_match": true,
+      "latency_ms": 2482.7,
+      "error": null
+    },
+    {
+      "id": 24,
+      "question": "ما هي البرامج المتاحة في أنطاليا؟",
+      "expected_answer": "أنطاليا شامل عائلي وأنطاليا برستيج",
+      "category": "program_list_ar",
+      "generated": "في أنطاليا، هناك برنامجين متاحين:\n\n1. **أنطاليا شامل - عائلي**:\n   - مدتها 7 أيام.\n   - سعرها 2800 دينار تونسي.\n   - يشمل الفندق: Antalya Beach Resort (4 نجوم).\n   - يشمل الخدمات: إقامة شاملة، شاطئ خاص، ترفيه، ورحلة إلى باموكالي.\n\n2. **أنطاليا برستيج**:\n   - مدتها 7 أيام.\n   - سعرها 4500 دينار تونسي.\n   - يشمل الفندق: Titanic Deluxe Belek (5 نجوم).\n   - يشمل الخدمات: إقامة شاملة، سبا، غولف، شاطئ خاص، وترansfer VIP.",
+      "relevance": 0.8,
+      "exact_match": true,
+      "latency_ms": 6418.9,
+      "error": null
+    },
+    {
+      "id": 25,
+      "question": "ما هو مناخ مراكش؟",
+      "expected_answer": "شبه جاف",
+      "category": "destination_ar",
+      "generated": "مناخ مراكش شبه صحراوي (Semi-aride).",
+      "relevance": 0.5,
+      "exact_match": false,
+      "latency_ms": 1329.9,
+      "error": null
+    }
+  ]
+}

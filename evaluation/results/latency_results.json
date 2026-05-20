@@ -1,0 +1,34 @@
+{
+  "RAG — Général": {
+    "mean_ms": 2109.9,
+    "median_ms": 1773.0,
+    "min_ms": 1446.6,
+    "max_ms": 3367.0,
+    "p95_ms": 3367.0,
+    "n": 9
+  },
+  "RAG — Programme": {
+    "mean_ms": 3728.4,
+    "median_ms": 2564.9,
+    "min_ms": 2188.4,
+    "max_ms": 6780.8,
+    "p95_ms": 6780.8,
+    "n": 9
+  },
+  "RAG — Arabe": {
+    "mean_ms": 4319.0,
+    "median_ms": 3183.1,
+    "min_ms": 2392.6,
+    "max_ms": 9116.4,
+    "p95_ms": 9116.4,
+    "n": 6
+  },
+  "Intent (offline)": {
+    "mean_ms": 0.0,
+    "median_ms": 0.0,
+    "min_ms": 0.0,
+    "max_ms": 0.0,
+    "p95_ms": 0.0,
+    "n": 15
+  }
+}

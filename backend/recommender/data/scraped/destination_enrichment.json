@@ -1,0 +1,64 @@
+{
+  "Dubai": {
+    "activities": [
+      "desert safari",
+      "Burj Khalifa",
+      "shopping"
+    ],
+    "amenities": [
+      "piscine",
+      "spa",
+      "plage"
+    ],
+    "season": "Hiver, Printemps"
+  },
+  "Paris": {
+    "activities": [
+      "Disneyland",
+      "Louvre",
+      "tour Eiffel"
+    ],
+    "amenities": [
+      "wifi",
+      "petit-dejeuner"
+    ],
+    "season": "Printemps, Été"
+  },
+  "Marrakech": {
+    "activities": [
+      "Jemaa el-Fna",
+      "jardin Majorelle",
+      "excursion Atlas"
+    ],
+    "amenities": [
+      "riad",
+      "piscine",
+      "spa"
+    ],
+    "season": "Printemps, Automne"
+  },
+  "Le Caire": {
+    "activities": [
+      "pyramides",
+      "musée égyptien",
+      "croisière Nil"
+    ],
+    "amenities": [
+      "wifi",
+      "petit-dejeuner"
+    ],
+    "season": "Hiver, Printemps"
+  },
+  "Rome": {
+    "activities": [
+      "Colisée",
+      "Vatican",
+      "fontaine de Trevi"
+    ],
+    "amenities": [
+      "wifi",
+      "centre-ville"
+    ],
+    "season": "Printemps, Automne"
+  }
+}
