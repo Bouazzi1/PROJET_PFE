@@ -44,18 +44,6 @@ La figure \ref{fig:workflow_conversationnel} illustre le workflow de traitement 
     \label{fig:workflow_conversationnel}
 \end{figure}
 
-\subsection{Planification temporelle}
-\label{subsec:gantt}
-
-La figure \ref{fig:gantt} présente le diagramme de Gantt du projet, détaillant la répartition des tâches et leur séquencement sur la durée du développement.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{diagramme_gantt_rihla.png}
-    \caption{Diagramme de Gantt du projet Rihla-AI, illustrant les six phases CRISP-DM et les principaux livrables associés.}
-    \label{fig:gantt}
-\end{figure}
-
 \section{Collection et description des données}
 \label{sec:methodo_donnees}
 
@@ -258,81 +246,208 @@ Les images de passeports transmises par les clients via WhatsApp ou email sont s
 \section{Les modèles utilisés}
 \label{sec:methodo_modeles}
 
+Cette section décrit en détail le fonctionnement interne de chacun des quatre composants intelligents de Rihla-AI, en suivant systématiquement la chaîne de traitement de l'entrée jusqu'à la sortie. Pour chaque modèle, un schéma illustratif est proposé afin de permettre au lecteur de visualiser les transformations successives appliquées aux données.
+
 \subsection{Classificateur d'intentions}
 \label{subsec:modele_intent}
 
-La première étape du traitement de tout message entrant consiste à déterminer l'intention de l'utilisateur afin de router la requête vers le module compétent. Ce classificateur est implémenté par correspondance lexicale pondérée (\textit{keyword matching}) sur la base de cinq classes d'intentions, détaillées dans le tableau \ref{tab:intent_classes}. Cette approche légère — ne faisant appel à aucun modèle d'apprentissage — a été privilégiée en raison de sa latence quasi nulle (inférieure à 1 ms mesurée lors des évaluations) et de sa précision suffisante pour les types de requêtes attendus dans le contexte d'une agence de voyages.
+\paragraph{Principe de fonctionnement.}
+La première étape du traitement d'un message entrant consiste à identifier ce que l'utilisateur cherche à accomplir — son \textit{intention} — afin d'aiguiller automatiquement la requête vers le module compétent. Ce classificateur repose sur une approche de \textbf{correspondance lexicale pondérée} (\textit{keyword matching}) : le message reçu est d'abord normalisé (conversion en minuscules, suppression des accents) puis parcouru à la recherche de termes déclencheurs prédéfinis, organisés en cinq dictionnaires correspondant aux cinq classes d'intentions du système.
+
+\paragraph{Algorithme de décision.}
+Pour chaque classe d'intention, un compteur de correspondances est incrémenté à chaque occurrence d'un terme déclencheur dans le message. La classe présentant le plus grand nombre de correspondances est retenue. En l'absence de toute correspondance — pour un message de salutation ou une question très générale —, l'intention par défaut \texttt{general} est attribuée, garantissant qu'aucune requête ne reste sans traitement. La détection de la présence d'une pièce jointe de type image déclenche systématiquement l'intention \texttt{ocr}, indépendamment du texte accompagnateur.
+
+\paragraph{Exemple concret.}
+Considérons le message : \textit{« Bonjour, je voudrais réserver un séjour en Turquie pour ma famille »}. Après normalisation, le système détecte les termes \texttt{« reserver »} et \texttt{« sejour »}. Le terme \texttt{« reserver »} appartient au dictionnaire \texttt{reservation} (score : 1), tandis que \texttt{« sejour »} appartient au dictionnaire \texttt{programme} (score : 1). En cas d'égalité, la priorité est accordée à \texttt{programme} selon l'ordre de préférence défini par les règles métier. La requête est alors routée vers le pipeline RAG avec le filtre \texttt{type=programme}.
 
 \begin{table}[H]
     \centering
-    \caption{Classes d'intentions du classificateur Rihla-AI et exemples de déclencheurs lexicaux.}
+    \caption{Classes d'intentions du classificateur Rihla-AI, modules cibles et exemples de déclencheurs lexicaux.}
     \label{tab:intent_classes}
     \renewcommand{\arraystretch}{1.4}
-    \begin{tabular}{|p{2.5cm}|p{5cm}|p{6.5cm}|}
+    \begin{tabular}{|p{2.5cm}|p{4.5cm}|p{7cm}|}
     \hline
     \textbf{Intention} & \textbf{Module cible} & \textbf{Exemples de déclencheurs} \\
     \hline
-    \texttt{general} & Pipeline RAG (collection selon langue) & « bonjour », « renseignements », « informations », question ouverte. \\
+    \texttt{general} & Pipeline RAG — collection complète & « bonjour », « renseignements », « informations », question ouverte sans mot-clé spécifique. \\
     \hline
-    \texttt{programme} & Pipeline RAG avec filtre \texttt{type=programme} & « programme », « voyage », « séjour », « formule », « prix ». \\
+    \texttt{programme} & Pipeline RAG — filtre \texttt{type=programme} & « programme », « voyage », « séjour », « formule », « offre », « prix », « circuit ». \\
     \hline
-    \texttt{reservation} & RAG + base PostgreSQL & « réserver », « réservation », « disponibilité », « dossier ». \\
+    \texttt{reservation} & Pipeline RAG + base PostgreSQL & « réserver », « réservation », « disponibilité », « dossier », « confirmer », « acompte ». \\
     \hline
-    \texttt{ocr} & Service OCR (EasyOCR + passporteye) & « passeport », « pièce d'identité », « document », \textit{[image jointe]}. \\
+    \texttt{ocr} & Service OCR (EasyOCR + passporteye) & « passeport », « pièce d'identité », « document », \textit{[présence d'une image jointe]}. \\
     \hline
-    \texttt{recommandation} & Moteur LightGBM + LLM & « recommandez-moi », « conseillez », « quel programme pour », « mon profil ». \\
+    \texttt{recommandation} & Moteur LightGBM + LLM & « recommandez-moi », « conseillez », « quel programme pour », « mon budget est de », « nous sommes ». \\
     \hline
     \end{tabular}
 \end{table}
 
+% ─── SCHÉMA À GÉNÉRER ───────────────────────────────────────────────────────
+% schema_intent_classifier.png
+% Flux : message brut → normalisation (minuscules + accents) →
+% scan des 5 dictionnaires de mots-clés → compteurs de score →
+% sélection de l'intention gagnante (ou fallback → general) →
+% flèche de routage vers le module cible (RAG / OCR / LightGBM).
+% ────────────────────────────────────────────────────────────────────────────
+
+La figure \ref{fig:intent_classifier} illustre le cheminement complet d'un message au travers du classificateur, depuis la réception du texte brut jusqu'à la décision de routage.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{schema_intent_classifier.png}
+    \caption{Flux de classification d'intentions dans Rihla-AI : normalisation du texte, correspondance lexicale sur cinq dictionnaires, sélection de l'intention et routage vers le module compétent.}
+    \label{fig:intent_classifier}
+\end{figure}
+
 \subsection{Pipeline RAG — Qwen 2.5 7B + nomic-embed-text + Qdrant}
 \label{subsec:modele_rag}
 
-Le cœur conversationnel de Rihla-AI repose sur un pipeline RAG combinant trois composants : le modèle d'embedding \textbf{nomic-embed-text} (vectorisation de la requête entrante), la base vectorielle \textbf{Qdrant} (récupération des segments les plus pertinents par similarité cosinus, Top-5), et le LLM \textbf{Qwen 2.5 7B} (génération de la réponse ancrée dans le contexte récupéré). L'interaction avec le LLM est structurée par un \textit{system prompt} spécifiant son rôle d'agent de l'agence Al-Rihla, ses contraintes de réponse (fidélité aux données de l'agence, refus des sujets hors-périmètre, courtoisie professionnelle), et la structure attendue de ses réponses.
+\paragraph{Vue d'ensemble.}
+Le pipeline RAG (\textit{Retrieval-Augmented Generation}) est le cœur conversationnel de Rihla-AI. Son rôle est de produire des réponses précises, fondées sur les données réelles de l'agence, en évitant les hallucinations que génèrerait un LLM consulté sans contexte factuel. Pour ce faire, il n'interroge jamais le LLM directement : il lui soumet toujours un \textit{prompt assemblé} contenant à la fois la question de l'utilisateur, les passages pertinents extraits de la base de connaissances et le contexte de la conversation en cours.
 
-Le pipeline RAG est appelé selon deux variantes :
+\paragraph{Étape 1 — Vectorisation de la requête.}
+À la réception du message, celui-ci est transformé en un vecteur numérique dense de dimension 768 par le modèle \textbf{nomic-embed-text}, exécuté localement via Ollama. Ce vecteur capture la signification sémantique du message — deux formulations différentes d'une même question produisent des vecteurs très proches — indépendamment de la formulation exacte utilisée par le client.
+
+\paragraph{Étape 2 — Récupération dans Qdrant.}
+Le vecteur de la requête est comparé par \textbf{similarité cosinus} à l'ensemble des 48 vecteurs de la collection correspondant à la langue du message (\texttt{rihla\_fr} ou \texttt{rihla\_ar}). Les 5 segments les plus proches sémantiquement (\textit{Top-5}) sont récupérés. Selon la variante du pipeline activée par l'intention détectée, cette recherche peut être restreinte à un sous-ensemble de chunks filtrés par leur champ de métadonnées \texttt{type} :
 
 \begin{itemize}
-    \item \textbf{RAG général} : requête soumise sans filtre de métadonnées, la recherche portant sur l'intégralité de la collection concernée. Utilisé pour les intentions \texttt{general}.
-    \item \textbf{RAG filtré par type} : la requête est accompagnée d'un filtre Qdrant restreignant la recherche aux chunks du type correspondant à l'intention détectée (\texttt{programme}, \texttt{destination}, etc.). Cette stratégie améliore sensiblement la précision des résultats pour les requêtes thématiques ciblées.
+    \item \textbf{RAG général} (intention \texttt{general}) : aucun filtre, recherche sur l'intégralité de la collection.
+    \item \textbf{RAG filtré par type} (intentions \texttt{programme}, \texttt{reservation}) : filtre Qdrant restreignant la recherche aux seuls chunks de type \texttt{programme} ou \texttt{destination}, augmentant la précision thématique.
 \end{itemize}
 
-La gestion de la mémoire conversationnelle est assurée par \textbf{Redis}, qui maintient pour chaque session une fenêtre glissante des 10 derniers échanges, avec un TTL (\textit{Time-To-Live}) de 24 heures. Ce contexte est injecté dans le prompt à chaque tour de conversation, permettant au LLM de maintenir la cohérence des échanges sur l'ensemble de la session.
+\paragraph{Étape 3 — Récupération du contexte conversationnel.}
+En parallèle, le service consulte \textbf{Redis} pour récupérer les 10 derniers échanges de la session en cours, identifiée par un identifiant de conversation unique. Cette fenêtre d'historique est essentielle pour la cohérence des échanges multi-tours : elle permet au LLM de comprendre les références anaphoriques (« ce programme », « cette destination ») et de maintenir la continuité thématique sans demander à l'utilisateur de se répéter. Si aucun historique n'existe (première interaction), Redis renvoie un contexte vide et une nouvelle session est initialisée avec un TTL de 24 heures.
+
+\paragraph{Étape 4 — Assemblage du prompt et génération.}
+Les trois sources d'information — \textit{system prompt} d'identité, historique Redis, chunks récupérés de Qdrant — sont assemblées en un prompt structuré soumis à \textbf{Qwen 2.5 7B}. Le \textit{system prompt} définit le rôle du modèle (« Tu es l'assistant de l'agence de voyages Al-Rihla, spécialisée en Tunisie »), ses contraintes (répondre uniquement à partir des données fournies, refuser les demandes hors-périmètre, utiliser la même langue que le client) et le format attendu. Le LLM génère alors une réponse ancrée dans les faits de l'agence, que Redis enregistre immédiatement pour alimenter les tours de conversation suivants.
+
+% ─── SCHÉMA À GÉNÉRER ───────────────────────────────────────────────────────
+% schema_rag_complet.png
+% Flux détaillé en 4 étapes :
+% [Message + session_id]
+%   → (1) nomic-embed-text → vecteur 768-dim
+%   → (2) Qdrant (rihla_fr ou rihla_ar, avec/sans filtre type) → Top-5 chunks
+%   → (3) Redis → historique 10 derniers échanges (ou vide si nouvelle session)
+%   → (4) Assemblage du prompt :
+%         [ System prompt | Historique | Chunks contexte | Question ]
+%         → Qwen 2.5 7B → réponse texte
+%   → Redis : sauvegarde du nouvel échange (TTL 24h)
+%   → Réponse renvoyée au client
+% ────────────────────────────────────────────────────────────────────────────
+
+La figure \ref{fig:rag_complet} illustre le flux complet du pipeline RAG, de la réception du message jusqu'à la génération et la sauvegarde de la réponse.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{schema_rag_complet.png}
+    \caption{Pipeline RAG détaillé de Rihla-AI : vectorisation, récupération Qdrant (avec ou sans filtre), injection du contexte Redis, assemblage du prompt et génération par Qwen 2.5 7B.}
+    \label{fig:rag_complet}
+\end{figure}
 
 \subsection{Pipeline OCR — EasyOCR, pytesseract, passporteye}
 \label{subsec:modele_ocr}
 
-Le service OCR de Rihla-AI suit un pipeline à deux branches parallèles, synchronisées en aval vers une structure de sortie unifiée. La branche \textbf{principale} confie l'image au moteur \textbf{EasyOCR}, fondé sur une architecture CRNN (\textit{Convolutional Recurrent Neural Network}) avec mécanisme d'attention, capable de reconnaître du texte dans plus de 80 langues. En cas d'échec ou d'indisponibilité d'EasyOCR, la branche de \textbf{repli} bascule automatiquement vers \textbf{pytesseract}, moteur OCR traditionnel basé sur Tesseract. Parallèlement et indépendamment de ces deux branches, \textbf{passporteye} est systématiquement invoqué pour localiser et décoder la Zone de Lecture Machine (MRZ) du passeport selon la norme ISO 9303. La MRZ, encodée sur deux lignes de 44 caractères chacune, fournit avec une fiabilité maximale les informations d'identité structurées : nom, prénom, nationalité, date de naissance, numéro de passeport et date d'expiration. Les résultats des deux branches sont fusionnés dans un dictionnaire structuré, retourné au client sous forme de JSON normalisé.
+\paragraph{Vue d'ensemble.}
+Lorsqu'un client envoie une photo de son passeport, le système doit en extraire automatiquement les données d'identité sans intervention humaine. Cette tâche mobilise trois composants distincts organisés en deux branches parallèles : une branche de reconnaissance de texte général (EasyOCR ou pytesseract) et une branche de décodage structuré de la zone MRZ (passporteye). Les résultats des deux branches sont ensuite fusionnés dans une structure JSON normalisée.
+
+\paragraph{Pré-traitement de l'image.}
+Avant toute reconnaissance, l'image reçue — généralement une photographie de smartphone au format JPEG ou PNG — subit trois opérations préparatoires réalisées par la bibliothèque \textbf{Pillow} : conversion en mode RGB (en cas d'image RGBA ou en niveaux de gris), redimensionnement à une largeur cible de 2 000 pixels (préservant le ratio d'aspect afin de garantir la lisibilité des caractères fins de la MRZ), et seuillage adaptatif des niveaux de gris en amont de pytesseract pour corriger les variations d'éclairage.
+
+\paragraph{Branche principale — EasyOCR (architecture CRNN).}
+\textbf{EasyOCR} repose sur une architecture CRNN (\textit{Convolutional Recurrent Neural Network}) à trois étages : (i) un réseau de neurones convolutif (\textit{ResNet}) extrait des cartes de caractéristiques visuelles depuis l'image prétraitée ; (ii) un réseau récurrent bidirectionnel (\textit{BiLSTM}) traite la séquence de caractéristiques pour capturer les dépendances contextuelles entre caractères adjacents ; (iii) un décodeur CTC (\textit{Connectionist Temporal Classification}) convertit la séquence de probabilités en texte brut, gérant naturellement les caractères répétés et les espaces variables entre lettres. Ce pipeline produit le texte libre visible dans la zone de données lisibles à l'œil (nom imprimé, numéros de vols, etc.).
+
+\paragraph{Branche de repli — pytesseract.}
+En cas d'échec ou d'indisponibilité d'EasyOCR (timeout, exception runtime), le service bascule automatiquement vers \textbf{pytesseract}, interface Python du moteur Tesseract développé par Google. Bien que moins précis sur les images de qualité variable, pytesseract garantit la continuité du service et ne requiert aucune dépendance deep learning.
+
+\paragraph{Branche MRZ — passporteye (ISO 9303).}
+En parallèle et indépendamment des deux branches précédentes, \textbf{passporteye} est systématiquement invoqué sur l'image originale. Ce module spécialisé localise automatiquement la \textbf{Zone de Lecture Machine} (\textit{Machine Readable Zone} — MRZ), bande de deux lignes de 44 caractères chacune imprimée en bas de la page biographique de tout passeport biométrique. Chaque ligne est encodée selon le standard international \textbf{ISO 9303} : les chiffres de contrôle (\textit{check digits}) garantissent l'intégrité de chaque champ, permettant de détecter et corriger des erreurs de reconnaissance. Les champs extraits sont : nom de famille, prénom(s), nationalité (code ISO 3166-1 alpha-3), date de naissance (AAMMJJ), numéro de passeport et date d'expiration.
+
+\paragraph{Fusion et sortie JSON.}
+Les résultats des deux branches sont combinés dans un dictionnaire Python, qui fait la priorité aux données MRZ de passporteye — plus structurées et fiables — pour les champs d'identité normalisés, et complète avec le texte libre d'EasyOCR pour les informations non encodées dans la MRZ. La structure JSON retournée contient systématiquement : \texttt{nom}, \texttt{prenom}, \texttt{numero\_passeport}, \texttt{date\_naissance}, \texttt{date\_expiration}, \texttt{nationalite}, ainsi qu'un champ \texttt{methode\_ocr} indiquant le moteur effectivement utilisé (\texttt{"easyocr"} ou \texttt{"pytesseract"}).
+
+% ─── SCHÉMA À GÉNÉRER ───────────────────────────────────────────────────────
+% schema_ocr_detail.png
+% Flux de transformation des données :
+% [Image passeport (JPEG/PNG)]
+%   → Prétraitement Pillow : RGB + resize 2000px + seuillage adaptatif
+%   → Branche A (principale) :
+%       EasyOCR : ResNet (conv) → BiLSTM (séquence) → CTC (décodage) → texte brut
+%   → Branche B (fallback) :
+%       pytesseract : heuristiques Tesseract → texte brut
+%   → Branche C (MRZ — toujours active) :
+%       passporteye : détection MRZ → ligne 1 (44 car.) + ligne 2 (44 car.)
+%                  → parsing ISO 9303 + vérification check digits
+%                  → champs structurés
+%   → Fusion : priorité branche C pour champs normalisés
+%   → Sortie JSON : {nom, prenom, numero, naissance, expiration, nationalite}
+% ────────────────────────────────────────────────────────────────────────────
+
+La figure \ref{fig:ocr_detail} illustre les transformations successives appliquées à l'image, depuis la réception du fichier brut jusqu'à la production de la structure JSON d'identité.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{schema_ocr_detail.png}
+    \caption{Pipeline OCR détaillé de Rihla-AI : prétraitement Pillow, branche EasyOCR (CRNN), branche passporteye (MRZ ISO 9303), fusion et sortie JSON structurée.}
+    \label{fig:ocr_detail}
+\end{figure}
 
 \subsection{Modèle de recommandation — LightGBM}
 \label{subsec:modele_lightgbm}
 
-Le moteur de recommandation est fondé sur l'algorithme \textbf{LightGBM} (\textit{Light Gradient Boosting Machine}), configuré en mode \textit{LambdaRank} pour l'optimisation directe d'une métrique de classement. Les principaux hyperparamètres retenus sont : un taux d'apprentissage (\textit{learning rate}) de 0,05, un nombre d'estimateurs de 100 arbres, une profondeur maximale de 6 niveaux, et la métrique \textbf{NDCG} (\textit{Normalized Discounted Cumulative Gain}) comme critère d'optimisation. À la suite de l'entraînement, le modèle est persisté sous format \texttt{.pkl} et chargé en mémoire au démarrage du service FastAPI, garantissant une inférence en temps quasi réel pour chaque requête de recommandation. La figure \ref{fig:lightgbm_workflow} illustre la chaîne complète du service de recommandation, depuis la réception du profil voyageur jusqu'à la génération de la réponse textuelle personnalisée par le LLM.
+\paragraph{Vue d'ensemble.}
+Lorsqu'un client sollicite une recommandation personnalisée, le système ne se contente pas de proposer les programmes les plus populaires : il calcule pour chaque programme disponible un \textit{score de pertinence} tenant compte du profil spécifique du voyageur. Ce score est produit par un modèle \textbf{LightGBM} entraîné à ordonner les programmes du plus au moins adapté à chaque profil, avant que le LLM ne rédige une justification personnalisée pour les meilleures recommandations.
+
+\paragraph{Principe du gradient boosting et de LightGBM.}
+LightGBM appartient à la famille des algorithmes d'\textit{ensemble learning} par \textbf{gradient boosting}. Il construit séquentiellement un ensemble de 100 arbres de décision : le premier arbre apprend à prédire les scores de pertinence à partir des 22 features ; chaque arbre suivant se concentre exclusivement sur les erreurs résiduelles du précédent, les corrigeant de manière itérative. L'originalité de LightGBM réside dans sa stratégie de croissance des arbres \textit{leaf-wise} (par feuille) plutôt que \textit{level-wise} (par niveau), qui converge plus rapidement vers une précision élevée en trouvant les partitions les plus discriminantes à chaque étape.
+
+\paragraph{Mode LambdaRank — optimisation du classement.}
+Le modèle est configuré en mode \textbf{LambdaRank}, une variante spécialisée dans l'apprentissage au classement (\textit{learning to rank}). Contrairement aux modes de régression ou de classification, LambdaRank optimise directement la métrique \textbf{NDCG} (\textit{Normalized Discounted Cumulative Gain}), définie formellement comme suit :
+
+\[
+\text{NDCG@k} = \frac{\text{DCG@k}}{\text{IDCG@k}}, \quad \text{avec } \text{DCG@k} = \sum_{i=1}^{k} \frac{2^{r_i} - 1}{\log_2(i+1)}
+\]
+
+où $r_i$ est le score de pertinence du programme en position $i$ dans le classement produit, et IDCG@k est le DCG du classement idéal (trié par pertinence décroissante). Un NDCG@5 = 1,0 signifie que les 5 programmes retournés sont ordonnés dans l'ordre de pertinence optimal — résultat obtenu lors de nos évaluations. Cette métrique est particulièrement adaptée à notre cas d'usage car elle pénalise plus sévèrement les erreurs de classement en tête de liste, là où l'attention du client est maximale.
+
+\paragraph{Processus d'inférence étape par étape.}
+Lorsqu'une requête de recommandation est reçue, les étapes suivantes sont exécutées :
+
+\begin{enumerate}
+    \item \textbf{Extraction du profil} : Les informations déclarées par le client (budget, type de profil, nombre de personnes, préférences) sont extraites du message par le LLM et structurées en un dictionnaire Python.
+    \item \textbf{Construction des vecteurs de features} : Pour chacun des 11 programmes du catalogue, un vecteur de 22 features est calculé en combinant les attributs du profil voyageur, les attributs du programme, et les 5 indicateurs de compatibilité croisée (tableau \ref{tab:features_lightgbm}).
+    \item \textbf{Scoring LightGBM} : Le modèle pré-entraîné (chargé en mémoire depuis le fichier \texttt{.pkl}) produit un score de pertinence pour chacun des 11 vecteurs en un temps inférieur à 5 ms.
+    \item \textbf{Classement et sélection} : Les 11 scores sont triés par ordre décroissant ; les 3 programmes les mieux classés (\textit{Top-3}) sont sélectionnés.
+    \item \textbf{Génération de la justification} : Les titres et descriptions des 3 programmes retenus, accompagnés du profil du voyageur, sont injectés dans un prompt soumis à Qwen 2.5 7B, qui rédige une réponse explicative personnalisée, dans la langue du client.
+\end{enumerate}
+
+\paragraph{Exemple concret.}
+Considérons un client envoyant : \textit{« Nous sommes une famille de 4, budget 6 000 TND, on aime la mer et la culture. »} Le profil extrait est : \texttt{type\_profil=famille}, \texttt{nb\_personnes=4}, \texttt{budget=6000}, \texttt{preference=balnéaire+culturel}. Après scoring LightGBM, supposons que le programme \textit{Istanbul + Cappadoce} obtienne le score le plus élevé (forte compatibilité culturelle, prix adulte dans la fourchette budgétaire, hébergement 4 étoiles adapté famille). Le LLM génère alors : \textit{« Pour votre famille de 4 personnes avec un budget de 6 000 TND, nous vous recommandons en priorité notre programme Istanbul + Cappadoce (12 jours), qui allie découverte culturelle et confort en hôtel 4 étoiles... »}
 
 \begin{table}[H]
     \centering
-    \caption{Hyperparamètres du modèle LightGBM et performances obtenues.}
+    \caption{Hyperparamètres du modèle LightGBM et performances d'évaluation.}
     \label{tab:lightgbm_params}
     \renewcommand{\arraystretch}{1.4}
-    \begin{tabular}{|p{5.5cm}|p{8cm}|}
+    \begin{tabular}{|p{6cm}|p{8cm}|}
     \hline
     \textbf{Paramètre / Métrique} & \textbf{Valeur} \\
     \hline
     Algorithme & LightGBM — mode LambdaRank \\
     \hline
-    Nombre d'estimateurs & 100 \\
+    Nombre d'estimateurs (arbres) & 100 \\
     \hline
     Taux d'apprentissage & 0,05 \\
     \hline
-    Profondeur maximale & 6 \\
+    Profondeur maximale par arbre & 6 \\
     \hline
-    Nombre de features & 22 \\
+    Nombre de features en entrée & 22 \\
     \hline
     Métrique d'optimisation & NDCG \\
     \hline
-    \textbf{NDCG@5 (évaluation)} & \textbf{1,0} \\
+    \textbf{NDCG@5} & \textbf{1,0} (classement parfait sur les 5 premiers) \\
     \hline
-    \textbf{NDCG@3 (évaluation)} & \textbf{1,0} \\
+    \textbf{NDCG@3} & \textbf{1,0} (classement parfait sur les 3 premiers) \\
     \hline
     \textbf{RMSE} & \textbf{5,5 × 10\textsuperscript{−5}} \\
     \hline
@@ -342,17 +457,25 @@ Le moteur de recommandation est fondé sur l'algorithme \textbf{LightGBM} (\text
 \end{table}
 
 % ─── SCHÉMA À GÉNÉRER ───────────────────────────────────────────────────────
-% schema_lightgbm_workflow.png  (optionnel — peut être remplacé par la table)
-% Flux : profil voyageur → extraction des 22 features → LightGBM →
-% scores de pertinence → tri → Top-3 programmes → LLM (justification) →
-% réponse textuelle personnalisée.
+% schema_lightgbm_pipeline.png
+% Flux de traitement :
+% [Message client] → LLM (extraction profil) → profil structuré
+%   → Pour chacun des 11 programmes :
+%       features_voyageur (6) + features_programme (11) + features_compat (5)
+%       = vecteur 22-dim
+%   → LightGBM (100 arbres, LambdaRank) → 11 scores de pertinence
+%   → Tri décroissant → Top-3 programmes
+%   → [profil + Top-3 descriptions] → Qwen 2.5 7B → réponse justifiée
+%   → [Réponse personnalisée au client]
 % ────────────────────────────────────────────────────────────────────────────
+
+La figure \ref{fig:lightgbm_pipeline} illustre la chaîne complète du service de recommandation, depuis l'extraction du profil voyageur jusqu'à la réponse justifiée générée par le LLM.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{schema_lightgbm_workflow.png}
-    \caption{Chaîne du service de recommandation Rihla-AI : du profil voyageur aux recommandations justifiées par le LLM.}
-    \label{fig:lightgbm_workflow}
+    \includegraphics[width=1.0\textwidth]{schema_lightgbm_pipeline.png}
+    \caption{Pipeline de recommandation LightGBM de Rihla-AI : extraction du profil, calcul des 22 features, scoring sur 11 programmes, sélection Top-3 et génération de justifications par Qwen 2.5 7B.}
+    \label{fig:lightgbm_pipeline}
 \end{figure}
 
 \section{Conclusion}
