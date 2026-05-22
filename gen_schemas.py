@@ -844,4 +844,131 @@ if __name__ == '__main__':
     gen_ocr_detail()
     gen_lightgbm()
     gen_bdd_postgresql()
-    print("\nAll 9 schemas generated.")
+    gen_crisp_dm()
+    print("\nAll 10 schemas generated.")
+
+
+def gen_crisp_dm():
+    """CRISP-DM cycle diagram: 6 phases around a center, tailored to Rihla-AI."""
+    import numpy as np
+    import matplotlib.patches as mp
+
+    BLUE   = '#1565C0'; BLUE_L   = '#BBDEFB'
+    TEAL   = '#00695C'; TEAL_L   = '#B2DFDB'
+    GREEN  = '#2E7D32'; GREEN_L  = '#C8E6C9'
+    PURPLE = '#6A1B9A'; PURPLE_L = '#E1BEE7'
+    ORANGE = '#BF360C'; ORANGE_L = '#FFE0B2'
+    SLATE  = '#37474F'; SLATE_L  = '#CFD8DC'
+    INDIGO = '#283593'
+
+    # (name_fr, name_en, description, angle_deg, hc, lc)
+    phases = [
+        ('Compréhension\nmétier',       'Business\nUnderstanding',
+         "WhatsApp · Email · OCR\nRecommandation personnalisée",    90,  BLUE,   BLUE_L),
+        ('Compréhension\ndes données',  'Data\nUnderstanding',
+         "PostgreSQL · 12 tables\n8 dest. · 11 programmes",          30,  TEAL,   TEAL_L),
+        ('Préparation\ndes données',    'Data\nPreparation',
+         "Chunks · nomic-embed 768D\nQdrant 2 collections · seed.sql", -30, GREEN,  GREEN_L),
+        ('Modélisation',                'Modeling',
+         "RAG · OCR · LightGBM\nFastAPI · n8n · Redis",             -90,  PURPLE, PURPLE_L),
+        ('Évaluation',                  'Evaluation',
+         "Intent 100% · NDCG=1.0\nOCR 88% · RAG 64.5%",            -150, ORANGE, ORANGE_L),
+        ('Déploiement',                 'Deployment',
+         "Docker Compose · WAHA\nStreamlit dashboard",               150,  SLATE,  SLATE_L),
+    ]
+
+    R   = 33   # radius for box centers
+    W   = 23   # box width
+    H   = 15   # box height
+    CX, CY = 50, 49  # diagram center
+
+    fig, ax = plt.subplots(figsize=(13, 13))
+    plt.subplots_adjust(left=0.02, right=0.98, top=0.95, bottom=0.05)
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 100)
+    ax.axis('off')
+    fig.patch.set_facecolor(WHITE)
+
+    ax.text(50, 97, "Méthodologie CRISP-DM – Rihla AI",
+            ha='center', va='center', fontsize=16, fontweight='bold', color=DARK)
+
+    # Central circle
+    ax.add_patch(mp.Circle((CX, CY), 12, facecolor='#E8EAF6',
+                 edgecolor=INDIGO, linewidth=2.5, zorder=5))
+    ax.text(CX, CY + 2.5, "Données", ha='center', va='center',
+            fontsize=12, fontweight='bold', color=INDIGO, zorder=6)
+    ax.text(CX, CY - 2.5, "Itératif", ha='center', va='center',
+            fontsize=9, color=INDIGO, fontstyle='italic', zorder=6)
+
+    # Compute box center positions
+    pos = []
+    for _, _, _, angle, hc, lc in phases:
+        a = np.radians(angle)
+        pos.append((CX + R * np.cos(a), CY + R * np.sin(a)))
+
+    def edge(cx, cy, dx, dy):
+        """Box edge point in direction (dx, dy) from center (cx, cy)."""
+        hw, hh = W / 2, H / 2
+        t = min(hw / abs(dx) if dx else 1e9, hh / abs(dy) if dy else 1e9)
+        return cx + dx * t, cy + dy * t
+
+    # Clockwise arrows between adjacent phases
+    for i in range(6):
+        j = (i + 1) % 6
+        cx1, cy1 = pos[i]
+        cx2, cy2 = pos[j]
+        hc = phases[i][4]
+        dx, dy = cx2 - cx1, cy2 - cy1
+        n = np.hypot(dx, dy)
+        dx_n, dy_n = dx / n, dy / n
+        x1, y1 = edge(cx1, cy1,  dx_n,  dy_n)
+        x2, y2 = edge(cx2, cy2, -dx_n, -dy_n)
+        ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
+                    arrowprops=dict(arrowstyle='->', color=hc, lw=2.5,
+                                   connectionstyle='arc3,rad=0'), zorder=2)
+
+    # Draw phase boxes (on top of arrows)
+    for i, (name_fr, name_en, desc, angle, hc, lc) in enumerate(phases):
+        cx, cy = pos[i]
+        x0, y0 = cx - W / 2, cy - H / 2
+
+        ax.add_patch(mp.FancyBboxPatch((x0, y0), W, H,
+                     boxstyle='round,pad=0.5', facecolor=lc,
+                     edgecolor=hc, linewidth=2.5, zorder=3))
+
+        # Number badge (top-left corner)
+        ax.add_patch(mp.Circle((x0 + 2.4, y0 + H - 2.4), 2.4,
+                     facecolor=hc, zorder=4))
+        ax.text(x0 + 2.4, y0 + H - 2.4, str(i + 1),
+                ha='center', va='center', fontsize=9,
+                fontweight='bold', color='white', zorder=5)
+
+        # French name (bold, colored)
+        ax.text(cx, cy + 2.8, name_fr, ha='center', va='center',
+                fontsize=10, fontweight='bold', color=hc,
+                zorder=4, linespacing=1.3)
+
+        # English subtitle (italic, lighter)
+        ax.text(cx, cy - 1.2, name_en, ha='center', va='center',
+                fontsize=7.5, color=hc, fontstyle='italic',
+                zorder=4, linespacing=1.2, alpha=0.75)
+
+        # Rihla-AI description
+        ax.text(cx, cy - 5.0, desc, ha='center', va='center',
+                fontsize=7.2, color='#37474F',
+                zorder=4, linespacing=1.35)
+
+    # Outer iteration arc (large arrow looping from deployment back to business understanding)
+    ax.annotate('', xy=(pos[0][0] - W/2 - 1, pos[0][1] - 1),
+                xytext=(pos[5][0] - W/2 + 1, pos[5][1] + 1),
+                arrowprops=dict(arrowstyle='->', color=INDIGO, lw=1.5,
+                                connectionstyle='arc3,rad=-0.45',
+                                linestyle='dashed'), zorder=2, alpha=0.6)
+    ax.text(pos[5][0] - W/2 - 3.5, (pos[5][1] + pos[0][1]) / 2,
+            "Itération\nsuivante", ha='center', va='center',
+            fontsize=7.5, color=INDIGO, fontstyle='italic', alpha=0.7)
+
+    plt.savefig('crisp_dm_cycle.png', dpi=180,
+                facecolor=WHITE, bbox_inches=None)
+    plt.close()
+    print("Done: crisp_dm_cycle.png")
