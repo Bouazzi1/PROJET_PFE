@@ -695,6 +695,145 @@ def gen_lightgbm():
     print("Done: schema_lightgbm_pipeline.png")
 
 
+def gen_bdd_postgresql():
+    """Simplified ERD: table names + relationships only, no field listings."""
+    import matplotlib.patches as mp
+
+    BLUE   = '#1565C0'; BLUE_L   = '#BBDEFB'
+    GREEN  = '#2E7D32'; GREEN_L  = '#C8E6C9'
+    ORANGE = '#BF360C'; ORANGE_L = '#FFE0B2'
+    TEAL   = '#00695C'; TEAL_L   = '#B2DFDB'
+    PURPLE = '#6A1B9A'; PURPLE_L = '#E1BEE7'
+    SLATE  = '#37474F'; SLATE_L  = '#CFD8DC'
+
+    W, H = 17, 7          # box width / height in data units
+    NAME_FS = 13          # table name font size
+
+    fig, ax = plt.subplots(figsize=(16, 12))
+    plt.subplots_adjust(left=0.02, right=0.98, top=0.94, bottom=0.06)
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 100)
+    ax.axis('off')
+    fig.patch.set_facecolor(WHITE)
+
+    ax.text(50, 97, "Schéma de la Base de Données PostgreSQL – Rihla AI",
+            ha='center', va='center', fontsize=15, fontweight='bold', color=DARK)
+
+    def _tbl(cx, cy, label, hc, lc):
+        x0, y0 = cx - W/2, cy - H/2
+        ax.add_patch(mp.FancyBboxPatch((x0, y0), W, H,
+                     boxstyle='round,pad=0.6', facecolor=lc,
+                     edgecolor=hc, linewidth=2.5, zorder=3))
+        ax.text(cx, cy, label, ha='center', va='center',
+                fontsize=NAME_FS, fontweight='bold', color=hc, zorder=4,
+                wrap=True)
+        return dict(cx=cx, cy=cy, x0=x0, y0=y0)
+
+    def _arrow(x1, y1, x2, y2, label, color, rad=0, ldy=1.2):
+        ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
+                    arrowprops=dict(arrowstyle='->', color=color, lw=2.0,
+                                   connectionstyle=f'arc3,rad={rad}'), zorder=2)
+        if label:
+            mx, my = (x1+x2)/2, (y1+y2)/2
+            ax.text(mx, my + ldy, label, ha='center', va='bottom',
+                    fontsize=9, fontweight='bold', color=color,
+                    bbox=dict(fc='white', ec='none', pad=1), zorder=5)
+
+    # ── positions (cx, cy)
+    pos = {
+        # Row 1  y=80
+        'destinations':            (12,  80),
+        'programme_destinations':  (35,  80),
+        'programmes':              (60,  80),
+        'hotels':                  (85,  80),
+        # Row 2  y=60
+        'conditions_visa':         (12,  60),
+        'activites':               (85,  60),
+        # Row 3  y=40
+        'clients':                 (12,  40),
+        'reservations':            (50,  40),
+        'recommandations_log':     (85,  40),
+        # Row 4  y=20
+        'conversations':           (12,  20),
+        'messages':                (50,  20),
+        'administrateurs':         (85,  20),
+    }
+
+    colors = {
+        'destinations': (BLUE, BLUE_L),
+        'programme_destinations': (BLUE, BLUE_L),
+        'conditions_visa': (BLUE, BLUE_L),
+        'programmes': (GREEN, GREEN_L),
+        'hotels': (GREEN, GREEN_L),
+        'activites': (GREEN, GREEN_L),
+        'clients': (ORANGE, ORANGE_L),
+        'reservations': (ORANGE, ORANGE_L),
+        'recommandations_log': (TEAL, TEAL_L),
+        'conversations': (PURPLE, PURPLE_L),
+        'messages': (PURPLE, PURPLE_L),
+        'administrateurs': (SLATE, SLATE_L),
+    }
+
+    # ── draw all boxes
+    b = {}
+    for name, (cx, cy) in pos.items():
+        hc, lc = colors[name]
+        b[name] = _tbl(cx, cy, name.replace('_', '\n') if len(name) > 14 else name, hc, lc)
+
+    # helper edge accessors
+    def right(n, dy=0): return pos[n][0]+W/2, pos[n][1]+dy
+    def left(n,  dy=0): return pos[n][0]-W/2, pos[n][1]+dy
+    def top(n,   dx=0): return pos[n][0]+dx,  pos[n][1]+H/2
+    def bot(n,   dx=0): return pos[n][0]+dx,  pos[n][1]-H/2
+
+    # ── relationships
+    # Row 1 horizontal chain
+    _arrow(*right('destinations'), *left('programme_destinations'), '1:N', BLUE)
+    _arrow(*right('programme_destinations'), *left('programmes'), 'N:1', BLUE)
+    _arrow(*right('programmes'), *left('hotels'), '1:N', GREEN)
+
+    # destinations → conditions_visa  (vertical)
+    _arrow(*bot('destinations'), *top('conditions_visa'), '1:N', BLUE, ldy=0.8)
+
+    # programmes → activites  (diagonal down-right)
+    _arrow(*right('programmes', dy=-1), *top('activites', dx=-2), '1:N', GREEN, rad=0.2, ldy=0.8)
+
+    # clients → reservations  (horizontal)
+    _arrow(*right('clients'), *left('reservations'), '1:N', ORANGE)
+
+    # reservations → programmes  (straight up through empty middle space)
+    _arrow(*top('reservations', dx=2), *bot('programmes', dx=2), 'N:1', ORANGE, rad=0, ldy=0.8)
+
+    # clients → recommandations_log  (horizontal, offset up slightly)
+    _arrow(*right('clients', dy=1.5), *left('recommandations_log', dy=1.5), '1:N', TEAL, rad=-0.18, ldy=0.8)
+
+    # clients → conversations  (vertical)
+    _arrow(*bot('clients'), *top('conversations'), '1:N', PURPLE, ldy=0.8)
+
+    # conversations → messages  (horizontal)
+    _arrow(*right('conversations'), *left('messages'), '1:N', PURPLE)
+
+    # ── legend
+    legend_items = [
+        (BLUE,   'Géographie / Référentiel'),
+        (GREEN,  'Programmes / Contenus'),
+        (ORANGE, 'Clients / Réservations'),
+        (TEAL,   'Logs IA'),
+        (PURPLE, 'Conversations'),
+        (SLATE,  'Administration'),
+    ]
+    for i, (col, lbl) in enumerate(legend_items):
+        lx = 1.5 + i * 16.5
+        ax.add_patch(mp.Rectangle((lx, 1.2), 3, 2.2, facecolor=col, zorder=6))
+        ax.text(lx + 3.8, 2.3, lbl, va='center', fontsize=8.5,
+                color='#37474F', zorder=6)
+
+    plt.savefig('schema_bdd_postgresql.png', dpi=180,
+                facecolor=WHITE, bbox_inches=None)
+    plt.close()
+    print("Done: schema_bdd_postgresql.png")
+
+
 if __name__ == '__main__':
     gen_rag()
     gen_ocr()
@@ -704,4 +843,5 @@ if __name__ == '__main__':
     gen_rag_complet()
     gen_ocr_detail()
     gen_lightgbm()
-    print("\nAll 8 schemas generated.")
+    gen_bdd_postgresql()
+    print("\nAll 9 schemas generated.")
